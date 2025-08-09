@@ -1,7 +1,7 @@
 import requests
 
 # Paste your NEW, SECRET key here. Do not share this key.
-API_KEY = "PASTE_YOUR_OWN_SECRET_API_KEY_HERE"
+API_KEY = "2c7975976c1e1319f9ab958e93074ad4"
 
 def get_weather(location_name):
     """
