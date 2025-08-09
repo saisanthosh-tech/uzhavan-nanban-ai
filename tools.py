@@ -1,31 +1,51 @@
 import requests
-import os # Good for managing API keys
 
-# It's better practice to get the key from environment variables,
-# but for the hackathon, you can start with it directly.
-API_KEY = "paste_your_api_key_here" 
+# Paste your NEW, SECRET key here. Do not share this key.
+API_KEY = "PASTE_YOUR_OWN_SECRET_API_KEY_HERE"
 
 def get_weather(location_name):
     """
-    Fetches 5-day weather forecast for a given location.
+    Fetches and processes the 5-day weather forecast for a given location.
     """
-    # URL from the weather API documentation
+    # API URL from the OpenWeatherMap documentation
     api_url = f"https://api.openweathermap.org/data/2.5/forecast?q={location_name}&appid={API_KEY}&units=metric"
     
-    # Make the request
     response = requests.get(api_url)
     
-    # Get the JSON data
-    data = response.json()
-    
-    # For now, just print the data to see if it works
-    print(data)
-    
-    # We will process this data later
-    return data
+    # Check if the request was successful (status code 200)
+    if response.status_code == 200:
+        data = response.json()
+        
+        # Create an empty list to store our clean data
+        clean_forecasts = []
+        
+        # Loop through the list of forecasts from the API response
+        for forecast_item in data['list']:
+            # Create a simple dictionary with only the data we need
+            clean_item = {
+                "time": forecast_item['dt_txt'],
+                "temp": forecast_item['main']['temp'],
+                "feels_like": forecast_item['main']['feels_like'],
+                "description": forecast_item['weather'][0]['description']
+            }
+            # Add the clean dictionary to our list
+            clean_forecasts.append(clean_item)
+            
+        # Return the final list of clean forecasts
+        return clean_forecasts
+    else:
+        # If there was an error, print the error and return None
+        print(f"Error: {response.status_code}, {response.text}")
+        return None
 
-# --- You can test your function directly in this file ---
+# --- This block is for testing the function directly ---
 if __name__ == "__main__":
-    # This block runs only when you execute this file directly
     print("Testing the weather tool...")
-    get_weather("Thanjavur")
+    
+    # We are testing with "Thanjavur"
+    thanjavur_weather = get_weather("Thanjavur")
+    
+    if thanjavur_weather:
+        # Print the first 5 forecast items to confirm it's working
+        for forecast in thanjavur_weather[:5]:
+            print(forecast)
